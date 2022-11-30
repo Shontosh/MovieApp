@@ -27,5 +27,11 @@ private MovieApiClient movieApiClient;
         return movieApiClient.getMovies();
     }
 
+    //calling the  methode in repository
+
+    public void searchMovieApi(String query,int pageNumber){
+        movieApiClient.searchMovieApi(query,pageNumber);
+    }
+
 
 }

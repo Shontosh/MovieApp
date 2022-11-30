@@ -25,32 +25,41 @@ import retrofit2.Response;
 
 public class MovieListActivity extends AppCompatActivity {
     Button btn;
-private MovieListViewModel movieListViewModel;
+    private MovieListViewModel movieListViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btn=findViewById(R.id.btn);
+        btn = findViewById(R.id.btn);
 
-        movieListViewModel=new ViewModelProvider(this).get(MovieListViewModel.class);
-
+        movieListViewModel = new ViewModelProvider(this).get(MovieListViewModel.class);
+        ObserveAnyChange();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getRetrofitResponse();
+                searchMovieApi("Fast", 1);
             }
         });
     }
 
-    private void ObserveAnyChange(){
+    private void ObserveAnyChange() {
         movieListViewModel.getMovies().observe(this, new Observer<List<MovieModel>>() {
             @Override
             public void onChanged(List<MovieModel> movieModels) {
 
+                if (movieModels != null) {
+                    for (MovieModel movieModel : movieModels) {
+                        Log.v("Tag", "onChanged" + movieModel.getTitle());
+                    }
+                }
             }
         });
     }
 
+    private void searchMovieApi(String query, int pageNumber) {
+        movieListViewModel.searchMovieApi(query, pageNumber);
+    }
 
     private void getRetrofitResponse() {
         MovieApi movieApi = Servicey.getMovieApi();
@@ -70,12 +79,10 @@ private MovieListViewModel movieListViewModel;
                         Log.v("Tag", "The release date " + movie.getRelease_date());
 
                     }
-                }
-                else {
+                } else {
                     try {
-                        Log.v("Tag","Error"+response.errorBody().toString());
-                    }
-                    catch (Exception e){
+                        Log.v("Tag", "Error" + response.errorBody().toString());
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -88,23 +95,21 @@ private MovieListViewModel movieListViewModel;
         });
     }
 
-    private void getRetrofitResponseById(){
-        MovieApi movieApi=Servicey.getMovieApi();
-        Call<MovieModel> responseCall=movieApi.getMovie(550,
+    private void getRetrofitResponseById() {
+        MovieApi movieApi = Servicey.getMovieApi();
+        Call<MovieModel> responseCall = movieApi.getMovie(550,
                 Credential.API_KEY);
 
         responseCall.enqueue(new Callback<MovieModel>() {
             @Override
             public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
-                if (response.code()==200){
-                    MovieModel movie=response.body();
-                    Log.v("Tag","The Response "+movie.getTitle());
-                }
-                else {
+                if (response.code() == 200) {
+                    MovieModel movie = response.body();
+                    Log.v("Tag", "The Response " + movie.getTitle());
+                } else {
                     try {
-                        Log.v("Tag","Error "+response.errorBody().string());
-                    }
-                    catch (Exception e){
+                        Log.v("Tag", "Error " + response.errorBody().string());
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 

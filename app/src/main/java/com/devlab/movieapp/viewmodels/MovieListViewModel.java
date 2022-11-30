@@ -21,4 +21,10 @@ public class MovieListViewModel extends ViewModel {
         return movieRepository.getMovies();
     }
 
+    //calling the  methode in repository
+
+    public void searchMovieApi(String query,int pageNumber){
+        movieRepository.searchMovieApi(query,pageNumber);
+    }
+
 }
